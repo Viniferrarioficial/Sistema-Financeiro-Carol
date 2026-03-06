@@ -32,26 +32,26 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ onBa
     const formasPagamento = ['Pix', 'Dinheiro', 'Boleto', 'Débito', 'Crédito'];
 
     return (
-        <div className="flex flex-col min-h-screen bg-background-light max-w-[480px] mx-auto w-full pb-10">
+        <div className="flex flex-col min-h-screen bg-background-light w-full pb-10">
             {/* Header */}
-            <div className="flex items-center p-4 sticky top-0 bg-background-light/80 backdrop-blur-md z-10 border-b border-primary/5">
+            <div className="flex items-center p-4 sticky top-0 bg-background-light/80 backdrop-blur-md z-10 border-b border-primary/5 w-full max-w-7xl mx-auto">
                 <button
                     onClick={onBack}
-                    className="text-slate-900 p-2 hover:bg-primary/10 rounded-full transition-colors"
+                    className="text-slate-900 p-2 hover:bg-primary/10 rounded-full transition-colors cursor-pointer"
                 >
                     <ArrowLeft size={24} />
                 </button>
                 <h2 className="text-lg font-extrabold flex-1 ml-2 text-slate-900">Novo Lançamento</h2>
                 <button
                     onClick={onSave}
-                    className="bg-primary text-white font-extrabold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-all flex items-center gap-2"
+                    className="bg-primary text-white font-extrabold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-all flex items-center gap-2 cursor-pointer hover:bg-primary/90"
                 >
                     <Save size={18} />
                     Salvar
                 </button>
             </div>
 
-            <div className="flex-1 p-6 space-y-6">
+            <div className="flex-1 p-6 w-full max-w-3xl mx-auto space-y-6">
                 {/* Valor Highlight */}
                 <div className="bg-white rounded-3xl p-6 shadow-sm border border-primary/5">
                     <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Valor do Lançamento</p>
@@ -81,7 +81,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ onBa
                                     key={p}
                                     onClick={() => setFormData({ ...formData, periodo: p })}
                                     className={cn(
-                                        "py-3 px-2 rounded-2xl text-xs font-bold border transition-all",
+                                        "py-3 px-2 rounded-2xl text-xs font-bold border transition-all cursor-pointer",
                                         formData.periodo === p
                                             ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
                                             : "bg-white text-slate-600 border-slate-100 hover:border-primary/30"
@@ -100,7 +100,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ onBa
                             Centro de Custo
                         </label>
                         <select
-                            className="w-full bg-white border border-slate-100 rounded-2xl p-4 text-base font-bold text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all appearance-none"
+                            className="w-full bg-white border border-slate-100 rounded-2xl p-4 text-base font-bold text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all appearance-none cursor-pointer"
                             value={formData.centroCusto}
                             onChange={(e) => setFormData({ ...formData, centroCusto: e.target.value })}
                         >
@@ -135,7 +135,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ onBa
                                     key={cat}
                                     onClick={() => setFormData({ ...formData, categoria: cat })}
                                     className={cn(
-                                        "py-2 px-4 rounded-xl text-xs font-bold border transition-all",
+                                        "py-2 px-4 rounded-xl text-xs font-bold border transition-all cursor-pointer",
                                         formData.categoria === cat
                                             ? "bg-primary/10 text-primary border-primary/20"
                                             : "bg-white text-slate-500 border-slate-100 hover:border-primary/20"
@@ -154,7 +154,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ onBa
                             Forma de Pagamento
                         </label>
                         <select
-                            className="w-full bg-white border border-slate-100 rounded-2xl p-4 text-base font-bold text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all appearance-none"
+                            className="w-full bg-white border border-slate-100 rounded-2xl p-4 text-base font-bold text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all appearance-none cursor-pointer"
                             value={formData.formaPagamento}
                             onChange={(e) => setFormData({ ...formData, formaPagamento: e.target.value })}
                         >
@@ -166,3 +166,4 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ onBa
         </div>
     );
 };
+

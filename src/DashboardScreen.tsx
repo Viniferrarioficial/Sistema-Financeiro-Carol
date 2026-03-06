@@ -4,39 +4,70 @@ import {
   TrendingDown,
   Search,
   Bell,
-  BarChart3,
-  PieChart,
   DollarSign,
-  LayoutGrid,
-  Settings,
-  ArrowUpRight,
   Wallet
 } from 'lucide-react';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
+  PieChart,
+  Pie,
+  Cell,
   Tooltip,
   ResponsiveContainer,
-  Cell
+  Legend
 } from 'recharts';
 
-const data = [
-  { name: 'Jan', value: 40 },
-  { name: 'Feb', value: 75 },
-  { name: 'Mar', value: 60 },
-  { name: 'Apr', value: 95 },
-  { name: 'May', value: 50 },
-  { name: 'Jun', value: 85 },
+const machadoData = [
+  { name: 'Faturamento', value: 65000, color: '#10b981' },
+  { name: 'Custo', value: 42000, color: '#f43f5e' },
+  { name: 'Lucro', value: 23000, color: '#6567f1' },
 ];
+
+const prudenteData = [
+  { name: 'Faturamento', value: 38000, color: '#10b981' },
+  { name: 'Custo', value: 25000, color: '#f43f5e' },
+  { name: 'Lucro', value: 13000, color: '#6567f1' },
+];
+
+const pirapoData = [
+  { name: 'Faturamento', value: 21500, color: '#10b981' },
+  { name: 'Custo', value: 15300, color: '#f43f5e' },
+  { name: 'Lucro', value: 6200, color: '#6567f1' },
+];
+
+const CompanyChart = ({ title, data }: { title: string, data: any[] }) => (
+  <div className="rounded-2xl bg-white p-6 shadow-sm border border-primary/5 flex flex-col h-full items-center">
+    <h2 className="text-lg font-extrabold mb-2 text-slate-900 w-full text-left">{title}</h2>
+    <div className="h-64 w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            innerRadius={60}
+            outerRadius={80}
+            paddingAngle={5}
+            dataKey="value"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip
+            formatter={(value: number) => `R$ ${value.toLocaleString('pt-BR')}`}
+            itemStyle={{ fontWeight: 'bold' }}
+            contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+          />
+          <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontWeight: 700, fontSize: '12px', color: '#64748b' }} />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+);
 
 export const DashboardScreen: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-background-light max-w-[480px] mx-auto w-full pb-24">
+    <div className="flex flex-col min-h-screen bg-background-light w-full pb-24 lg:pb-8">
       {/* Header */}
-      <header className="flex items-center bg-background-light p-4 sticky top-0 z-10 border-b border-primary/10">
+      <header className="flex items-center bg-background-light p-4 sticky top-0 z-10 border-b border-primary/10 w-full max-w-7xl mx-auto">
         <div className="flex size-12 shrink-0 items-center justify-center bg-primary/10 rounded-xl text-primary">
           <TrendingUp size={28} />
         </div>
@@ -45,144 +76,57 @@ export const DashboardScreen: React.FC = () => {
           <p className="text-xs font-bold text-slate-500">Painel de Performance Empresarial</p>
         </div>
         <div className="flex gap-2">
-          <button className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <button className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors cursor-pointer">
             <Search size={20} />
           </button>
-          <button className="flex size-10 items-center justify-center rounded-full bg-primary text-white">
+          <button className="flex size-10 items-center justify-center rounded-full bg-primary text-white hover:bg-primary/90 transition-colors cursor-pointer">
             <Bell size={20} />
           </button>
         </div>
       </header>
 
-      {/* KPI Section */}
-      <section className="grid grid-cols-2 gap-4 p-4">
-        <div className="flex flex-col gap-2 rounded-2xl p-5 bg-white shadow-sm border border-primary/5">
-          <div className="flex justify-between items-start">
-            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Receita Total</p>
-            <DollarSign className="text-primary w-5 h-5" />
-          </div>
-          <p className="text-2xl font-extrabold text-slate-900">R$ 124.500</p>
-          <div className="flex items-center gap-1">
-            <TrendingUp className="text-emerald-500 w-4 h-4" />
-            <p className="text-emerald-500 text-sm font-bold">+12.5%</p>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2 rounded-2xl p-5 bg-white shadow-sm border border-primary/5">
-          <div className="flex justify-between items-start">
-            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Lucro Líquido</p>
-            <Wallet className="text-primary w-5 h-5" />
-          </div>
-          <p className="text-2xl font-extrabold text-slate-900">R$ 42.200</p>
-          <div className="flex items-center gap-1">
-            <TrendingDown className="text-rose-500 w-4 h-4" />
-            <p className="text-rose-500 text-sm font-bold">-2.4%</p>
-          </div>
-        </div>
-        <div className="col-span-2 flex flex-col gap-2 rounded-2xl p-5 bg-white shadow-sm border border-primary/5">
-          <div className="flex justify-between items-start">
-            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Market Share</p>
-            <PieChart className="text-primary w-5 h-5" />
-          </div>
-          <p className="text-2xl font-extrabold text-slate-900">18.4%</p>
-          <div className="flex items-center gap-1">
-            <TrendingUp className="text-emerald-500 w-4 h-4" />
-            <p className="text-emerald-500 text-sm font-bold">+5.1%</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Main Charts Area */}
-      <main className="flex flex-col gap-6 px-4">
-        {/* Monthly Balance Bar Chart */}
-        <div className="rounded-2xl bg-white p-6 shadow-sm border border-primary/5">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-lg font-extrabold text-slate-900">Balanço Mensal</h2>
-              <p className="text-sm font-medium text-slate-500">Visão geral de 2024</p>
-            </div>
-            <div className="flex items-center gap-1 bg-primary/5 px-3 py-1.5 rounded-full">
-              <span className="text-primary text-sm font-extrabold">R$ 42.200</span>
-              <ArrowUpRight className="text-emerald-500 w-4 h-4" />
-            </div>
-          </div>
-
-          <div className="h-48 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-                  {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill="#6567f1" fillOpacity={0.2 + (entry.value / 100) * 0.8} />
-                  ))}
-                </Bar>
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fontWeight: 700, fill: '#94a3b8' }}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Revenue Distribution */}
-        <div className="rounded-2xl bg-white p-6 shadow-sm border border-primary/5">
-          <h2 className="text-lg font-extrabold mb-4 text-slate-900">Receita por Categoria</h2>
-          <div className="flex items-center gap-6">
-            <div className="relative size-32 rounded-full border-[12px] border-primary flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full border-[12px] border-emerald-400" style={{ clipPath: 'polygon(50% 50%, 50% 0, 100% 0, 100% 50%)' }}></div>
-              <div className="absolute inset-0 rounded-full border-[12px] border-amber-400" style={{ clipPath: 'polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%)' }}></div>
-              <span className="text-[10px] font-extrabold text-slate-500 uppercase">Lojas</span>
-            </div>
-            <div className="flex flex-col gap-3 flex-1">
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="size-2.5 rounded-full bg-primary"></div>
-                  <span className="text-slate-600 font-bold">Machado</span>
-                </div>
-                <span className="font-extrabold">45%</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="size-2.5 rounded-full bg-emerald-400"></div>
-                  <span className="text-slate-600 font-bold">Prudente</span>
-                </div>
-                <span className="font-extrabold">25%</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="size-2.5 rounded-full bg-amber-400"></div>
-                  <span className="text-slate-600 font-bold">Pirapó</span>
-                </div>
-                <span className="font-extrabold">30%</span>
+      <div className="w-full max-w-7xl mx-auto">
+        {/* KPI Section */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 lg:px-6">
+          <div className="flex flex-col gap-2 rounded-2xl p-6 bg-white shadow-sm border border-primary/5">
+            <div className="flex justify-between items-start">
+              <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Receita Total</p>
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <DollarSign className="text-primary w-5 h-5" />
               </div>
             </div>
+            <p className="text-3xl font-extrabold text-slate-900">R$ 124.500</p>
+            <div className="flex items-center gap-1 mt-1">
+              <TrendingUp className="text-emerald-500 w-4 h-4" />
+              <p className="text-emerald-500 text-sm font-bold">+12.5% em relação ao mês anterior</p>
+            </div>
           </div>
-        </div>
-
-        {/* Top Suppliers */}
-        <div className="rounded-2xl bg-white p-6 shadow-sm border border-primary/5">
-          <h2 className="text-lg font-extrabold mb-4 text-slate-900">Maiores Fornecedores</h2>
-          <div className="flex flex-col gap-5">
-            {[
-              { id: 'TC', name: 'TechCorp Solutions', plan: 'Suporte Sistema', amount: '- R$ 12.400' },
-              { id: 'GN', name: 'Global Nexus', plan: 'Mercadorias', amount: '- R$ 8.200' },
-              { id: 'AV', name: 'Apex Ventures', plan: 'Consultoria', amount: '- R$ 5.100' }
-            ].map((customer) => (
-              <div key={customer.id} className="flex items-center gap-3">
-                <div className="size-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-extrabold">
-                  {customer.id}
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-extrabold text-slate-900">{customer.name}</p>
-                  <p className="text-xs font-bold text-slate-500">{customer.plan}</p>
-                </div>
-                <p className="text-sm font-extrabold text-rose-500">{customer.amount}</p>
+          <div className="flex flex-col gap-2 rounded-2xl p-6 bg-white shadow-sm border border-primary/5">
+            <div className="flex justify-between items-start">
+              <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Lucro Líquido</p>
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Wallet className="text-primary w-5 h-5" />
               </div>
-            ))}
+            </div>
+            <p className="text-3xl font-extrabold text-slate-900">R$ 42.200</p>
+            <div className="flex items-center gap-1 mt-1">
+              <TrendingDown className="text-rose-500 w-4 h-4" />
+              <p className="text-rose-500 text-sm font-bold">-2.4% em relação ao mês anterior</p>
+            </div>
           </div>
-        </div>
-      </main>
+        </section>
+
+        {/* Main Charts Area */}
+        <main className="flex flex-col gap-6 px-4 lg:px-6 mt-2">
+          <h2 className="text-lg font-extrabold text-slate-900">Performance por Unidade</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <CompanyChart title="Unidade Machado" data={machadoData} />
+            <CompanyChart title="Unidade Prudente" data={prudenteData} />
+            <CompanyChart title="Unidade Pirapó" data={pirapoData} />
+          </div>
+        </main>
+      </div>
     </div>
   );
 };
+

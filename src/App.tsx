@@ -51,43 +51,43 @@ export default function App() {
 
       {/* Main Navigation at the Bottom */}
       {currentScreen !== 'login' && currentScreen !== 'add-transaction' && (
-        <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-md border-t border-slate-200 pb-8 pt-3">
-          <div className="max-w-[480px] mx-auto flex justify-around px-4">
+        <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-md border-t border-slate-200 pb-safe pt-3 lg:pb-3 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+          <div className="max-w-7xl mx-auto flex justify-around px-4">
             <button
               onClick={() => setCurrentScreen('dashboard')}
               className={cn(
-                "flex flex-col items-center gap-1 transition-colors",
-                currentScreen === 'dashboard' ? "text-primary" : "text-slate-400"
+                "flex flex-col items-center gap-1 transition-colors px-10 py-1 rounded-2xl",
+                currentScreen === 'dashboard' ? "text-primary" : "text-slate-400 hover:text-slate-600"
               )}
             >
               <div className="h-6 flex items-center">
-                <LayoutGrid size={22} className={currentScreen === 'dashboard' ? "fill-primary/20" : ""} />
+                <LayoutGrid size={24} className={currentScreen === 'dashboard' ? "fill-primary/20" : ""} />
               </div>
-              <p className="text-[10px] font-extrabold uppercase tracking-widest">Dash</p>
+              <p className="text-[11px] font-extrabold uppercase tracking-widest mt-1">Dash</p>
             </button>
             <button
               onClick={() => setCurrentScreen('finance')}
               className={cn(
-                "flex flex-col items-center gap-1 transition-colors",
-                currentScreen === 'finance' ? "text-primary" : "text-slate-400"
+                "flex flex-col items-center gap-1 transition-colors px-10 py-1 rounded-2xl",
+                currentScreen === 'finance' ? "text-primary" : "text-slate-400 hover:text-slate-600"
               )}
             >
               <div className="h-6 flex items-center">
-                <Receipt size={22} className={currentScreen === 'finance' ? "fill-primary/20" : ""} />
+                <Receipt size={24} className={currentScreen === 'finance' ? "fill-primary/20" : ""} />
               </div>
-              <p className="text-[10px] font-extrabold uppercase tracking-widest">Flow</p>
+              <p className="text-[11px] font-extrabold uppercase tracking-widest mt-1">Flow</p>
             </button>
             <button
               onClick={() => setCurrentScreen('settings')}
               className={cn(
-                "flex flex-col items-center gap-1 transition-colors",
-                currentScreen === 'settings' ? "text-primary" : "text-slate-400"
+                "flex flex-col items-center gap-1 transition-colors px-10 py-1 rounded-2xl",
+                currentScreen === 'settings' ? "text-primary" : "text-slate-400 hover:text-slate-600"
               )}
             >
               <div className="h-6 flex items-center">
-                <SettingsIcon size={22} className={currentScreen === 'settings' ? "fill-primary/20" : ""} />
+                <SettingsIcon size={24} className={currentScreen === 'settings' ? "fill-primary/20" : ""} />
               </div>
-              <p className="text-[10px] font-extrabold uppercase tracking-widest">Prefs</p>
+              <p className="text-[11px] font-extrabold uppercase tracking-widest mt-1">Prefs</p>
             </button>
           </div>
         </div>
