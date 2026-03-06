@@ -1,11 +1,11 @@
 import React from 'react';
-import { 
-  Menu, 
-  Search, 
-  Bell, 
-  TrendingUp, 
-  Calendar, 
-  ShoppingCart, 
+import {
+  Menu,
+  Search,
+  Bell,
+  TrendingUp,
+  Calendar,
+  ShoppingCart,
   Plus,
   LayoutGrid,
   Receipt,
@@ -17,9 +17,13 @@ import {
   Car
 } from 'lucide-react';
 
-export const FinanceScreen: React.FC = () => {
+interface FinanceScreenProps {
+  onAddTransaction: () => void;
+}
+
+export const FinanceScreen: React.FC<FinanceScreenProps> = ({ onAddTransaction }) => {
   return (
-    <div className="flex flex-col min-h-screen bg-background-light max-w-[480px] mx-auto w-full pb-24 border-x border-primary/5">
+    <div className="flex flex-col min-h-screen bg-background-light max-w-[480px] mx-auto w-full pb-32 border-x border-primary/5">
       {/* Header */}
       <div className="flex items-center p-4 pb-2 justify-between sticky top-0 bg-background-light/80 backdrop-blur-md z-20">
         <div className="flex items-center gap-3">
@@ -74,20 +78,20 @@ export const FinanceScreen: React.FC = () => {
                 <ShoppingCart size={24} />
               </div>
               <div>
-                <p className="font-extrabold text-slate-900">Supermercado Silva</p>
-                <p className="text-xs font-bold text-slate-500">Alimentação • 12 Out 2023</p>
+                <p className="font-extrabold text-slate-900">Supermercado Prudente</p>
+                <p className="text-xs font-bold text-slate-500">Mercadoria • Mensal</p>
               </div>
             </div>
             <p className="font-extrabold text-rose-500 text-right">- R$ 450,20</p>
           </div>
           <div className="grid grid-cols-2 gap-y-2 pt-3 border-t border-slate-50">
             <div>
-              <p className="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest">Centro de Custo</p>
-              <p className="text-xs font-bold text-slate-700">Pessoal / Casa</p>
+              <p className="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest">Unidade</p>
+              <p className="text-xs font-bold text-slate-700">Prudente</p>
             </div>
             <div className="text-right">
               <p className="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest">Pagamento</p>
-              <p className="text-xs font-bold text-slate-700">Cartão de Crédito</p>
+              <p className="text-xs font-bold text-slate-700">Débito</p>
             </div>
           </div>
         </div>
@@ -100,20 +104,20 @@ export const FinanceScreen: React.FC = () => {
                 <Banknote size={24} />
               </div>
               <div>
-                <p className="font-extrabold text-slate-900">Salário Mensal</p>
-                <p className="text-xs font-bold text-slate-500">Renda • 05 Out 2023</p>
+                <p className="font-extrabold text-slate-900">Venda Loja Machado</p>
+                <p className="text-xs font-bold text-slate-500">Loja • Semanal</p>
               </div>
             </div>
             <p className="font-extrabold text-emerald-500 text-right">+ R$ 5.500,00</p>
           </div>
           <div className="grid grid-cols-2 gap-y-2 pt-3 border-t border-slate-50">
             <div>
-              <p className="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest">Centro de Custo</p>
-              <p className="text-xs font-bold text-slate-700">Empresa ABC</p>
+              <p className="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest">Unidade</p>
+              <p className="text-xs font-bold text-slate-700">Machado</p>
             </div>
             <div className="text-right">
               <p className="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest">Pagamento</p>
-              <p className="text-xs font-bold text-slate-700">PIX / Transferência</p>
+              <p className="text-xs font-bold text-slate-700">Pix</p>
             </div>
           </div>
         </div>
@@ -126,53 +130,30 @@ export const FinanceScreen: React.FC = () => {
                 <Tv size={24} />
               </div>
               <div>
-                <p className="font-extrabold text-slate-900">Netflix Premium</p>
-                <p className="text-xs font-bold text-slate-500">Lazer • 02 Out 2023</p>
+                <p className="font-extrabold text-slate-900">Manutenção Internet</p>
+                <p className="text-xs font-bold text-slate-500">Internet • Despesa</p>
               </div>
             </div>
-            <p className="font-extrabold text-rose-500 text-right">- R$ 55,90</p>
+            <p className="font-extrabold text-rose-500 text-right">- R$ 150,00</p>
           </div>
           <div className="grid grid-cols-2 gap-y-2 pt-3 border-t border-slate-50">
             <div>
-              <p className="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest">Centro de Custo</p>
-              <p className="text-xs font-bold text-slate-700">Entretenimento</p>
+              <p className="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest">Unidade</p>
+              <p className="text-xs font-bold text-slate-700">Pirapó</p>
             </div>
             <div className="text-right">
               <p className="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest">Pagamento</p>
-              <p className="text-xs font-bold text-slate-700">Cartão Digital</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Transaction Item 4 */}
-        <div className="flex flex-col gap-4 bg-white p-4 rounded-2xl shadow-sm border border-primary/5">
-          <div className="flex justify-between items-start">
-            <div className="flex gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
-                <Car size={24} />
-              </div>
-              <div>
-                <p className="font-extrabold text-slate-900">Posto Ipiranga</p>
-                <p className="text-xs font-bold text-slate-500">Transporte • 28 Set 2023</p>
-              </div>
-            </div>
-            <p className="font-extrabold text-rose-500 text-right">- R$ 220,00</p>
-          </div>
-          <div className="grid grid-cols-2 gap-y-2 pt-3 border-t border-slate-50">
-            <div>
-              <p className="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest">Centro de Custo</p>
-              <p className="text-xs font-bold text-slate-700">Automóvel</p>
-            </div>
-            <div className="text-right">
-              <p className="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest">Pagamento</p>
-              <p className="text-xs font-bold text-slate-700">Débito</p>
+              <p className="text-xs font-bold text-slate-700">Boleto</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Floating Action Button */}
-      <button className="fixed bottom-28 right-6 h-14 w-14 bg-primary text-white rounded-full shadow-2xl shadow-primary/40 flex items-center justify-center z-30 transform hover:scale-110 active:scale-95 transition-all">
+      <button
+        onClick={onAddTransaction}
+        className="fixed bottom-28 right-6 h-14 w-14 bg-primary text-white rounded-full shadow-2xl shadow-primary/40 flex items-center justify-center z-30 transform hover:scale-110 active:scale-95 transition-all outline-none"
+      >
         <Plus size={32} />
       </button>
     </div>

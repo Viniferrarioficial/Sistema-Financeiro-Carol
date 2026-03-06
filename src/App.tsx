@@ -3,11 +3,12 @@ import { LoginScreen } from './LoginScreen';
 import { DashboardScreen } from './DashboardScreen';
 import { SettingsScreen } from './SettingsScreen';
 import { FinanceScreen } from './FinanceScreen';
+import { AddTransactionScreen } from './AddTransactionScreen';
 import { motion, AnimatePresence } from 'motion/react';
-import { LogIn, LayoutGrid, Receipt, Settings as SettingsIcon } from 'lucide-react';
+import { LayoutGrid, Receipt, Settings as SettingsIcon } from 'lucide-react';
 import { cn } from './lib/utils';
 
-type Screen = 'login' | 'dashboard' | 'settings' | 'finance';
+type Screen = 'login' | 'dashboard' | 'settings' | 'finance' | 'add-transaction';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
@@ -19,9 +20,16 @@ export default function App() {
       case 'dashboard':
         return <DashboardScreen />;
       case 'settings':
-        return <SettingsScreen />;
+        return <SettingsScreen onLogout={() => setCurrentScreen('login')} />;
       case 'finance':
-        return <FinanceScreen />;
+        return <FinanceScreen onAddTransaction={() => setCurrentScreen('add-transaction')} />;
+      case 'add-transaction':
+        return (
+          <AddTransactionScreen
+            onBack={() => setCurrentScreen('finance')}
+            onSave={() => setCurrentScreen('finance')}
+          />
+        );
       default:
         return <LoginScreen onLogin={() => setCurrentScreen('dashboard')} />;
     }
@@ -42,58 +50,48 @@ export default function App() {
       </AnimatePresence>
 
       {/* Main Navigation at the Bottom */}
-      <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-md border-t border-slate-200 pb-8 pt-3">
-        <div className="max-w-[480px] mx-auto flex justify-around px-4">
-          <button 
-            onClick={() => setCurrentScreen('login')}
-            className={cn(
-              "flex flex-col items-center gap-1 transition-colors",
-              currentScreen === 'login' ? "text-primary" : "text-slate-400"
-            )}
-          >
-            <div className="h-6 flex items-center">
-              <LogIn size={22} className={currentScreen === 'login' ? "fill-primary/20" : ""} />
-            </div>
-            <p className="text-[10px] font-extrabold uppercase tracking-widest">Login</p>
-          </button>
-          <button 
-            onClick={() => setCurrentScreen('dashboard')}
-            className={cn(
-              "flex flex-col items-center gap-1 transition-colors",
-              currentScreen === 'dashboard' ? "text-primary" : "text-slate-400"
-            )}
-          >
-            <div className="h-6 flex items-center">
-              <LayoutGrid size={22} className={currentScreen === 'dashboard' ? "fill-primary/20" : ""} />
-            </div>
-            <p className="text-[10px] font-extrabold uppercase tracking-widest">Dash</p>
-          </button>
-          <button 
-            onClick={() => setCurrentScreen('finance')}
-            className={cn(
-              "flex flex-col items-center gap-1 transition-colors",
-              currentScreen === 'finance' ? "text-primary" : "text-slate-400"
-            )}
-          >
-            <div className="h-6 flex items-center">
-              <Receipt size={22} className={currentScreen === 'finance' ? "fill-primary/20" : ""} />
-            </div>
-            <p className="text-[10px] font-extrabold uppercase tracking-widest">Flow</p>
-          </button>
-          <button 
-            onClick={() => setCurrentScreen('settings')}
-            className={cn(
-              "flex flex-col items-center gap-1 transition-colors",
-              currentScreen === 'settings' ? "text-primary" : "text-slate-400"
-            )}
-          >
-            <div className="h-6 flex items-center">
-              <SettingsIcon size={22} className={currentScreen === 'settings' ? "fill-primary/20" : ""} />
-            </div>
-            <p className="text-[10px] font-extrabold uppercase tracking-widest">Prefs</p>
-          </button>
+      {currentScreen !== 'login' && currentScreen !== 'add-transaction' && (
+        <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-md border-t border-slate-200 pb-8 pt-3">
+          <div className="max-w-[480px] mx-auto flex justify-around px-4">
+            <button
+              onClick={() => setCurrentScreen('dashboard')}
+              className={cn(
+                "flex flex-col items-center gap-1 transition-colors",
+                currentScreen === 'dashboard' ? "text-primary" : "text-slate-400"
+              )}
+            >
+              <div className="h-6 flex items-center">
+                <LayoutGrid size={22} className={currentScreen === 'dashboard' ? "fill-primary/20" : ""} />
+              </div>
+              <p className="text-[10px] font-extrabold uppercase tracking-widest">Dash</p>
+            </button>
+            <button
+              onClick={() => setCurrentScreen('finance')}
+              className={cn(
+                "flex flex-col items-center gap-1 transition-colors",
+                currentScreen === 'finance' ? "text-primary" : "text-slate-400"
+              )}
+            >
+              <div className="h-6 flex items-center">
+                <Receipt size={22} className={currentScreen === 'finance' ? "fill-primary/20" : ""} />
+              </div>
+              <p className="text-[10px] font-extrabold uppercase tracking-widest">Flow</p>
+            </button>
+            <button
+              onClick={() => setCurrentScreen('settings')}
+              className={cn(
+                "flex flex-col items-center gap-1 transition-colors",
+                currentScreen === 'settings' ? "text-primary" : "text-slate-400"
+              )}
+            >
+              <div className="h-6 flex items-center">
+                <SettingsIcon size={22} className={currentScreen === 'settings' ? "fill-primary/20" : ""} />
+              </div>
+              <p className="text-[10px] font-extrabold uppercase tracking-widest">Prefs</p>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
