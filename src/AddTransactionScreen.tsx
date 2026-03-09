@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from './lib/supabase';
 import {
     ArrowLeft,
     Save,
@@ -17,19 +18,77 @@ interface AddTransactionScreenProps {
 }
 
 export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ onBack, onSave }) => {
-    const [formData, setFormData] = useState({
-        periodo: 'Mensal',
-        centroCusto: 'Machado',
-        descricao: '',
-        categoria: 'Loja',
-        formaPagamento: 'Pix',
-        valor: ''
+    const [loading, setLoading] = useState(false);
+    const [options, setOptions] = useState<any>({
+        periods: [],
+        costCenters: [],
+        categories: [],
+        paymentMethods: []
     });
 
-    const periodos = ['Mensal', 'Semanal', 'Despesa'];
-    const centrosCusto = ['Machado', 'Prudente', 'Pirapó'];
-    const categorias = ['Loja', 'Mercadoria', 'Salário', 'Vale', 'Energia', 'Água', 'Sistema', 'Internet', 'Serviço'];
-    const formasPagamento = ['Pix', 'Dinheiro', 'Boleto', 'Débito', 'Crédito'];
+    const [formData, setFormData] = useState({
+        periodo: '',
+        centroCusto: '',
+        descricao: '',
+        categoria: '',
+        formaPagamento: '',
+        valor: '',
+        tipo: 'expense' as 'income' | 'expense'
+    });
+
+    useEffect(() => {
+        fetchOptions();
+    }, []);
+
+    const fetchOptions = async () => {
+        const [p, cc, cat, pm] = await Promise.all([
+            supabase.from('periods').select('*'),
+            supabase.from('cost_centers').select('*'),
+            supabase.from('categories').select('*'),
+            supabase.from('payment_methods').select('*')
+        ]);
+
+        setOptions({
+            periods: p.data || [],
+            costCenters: cc.data || [],
+            categories: cat.data || [],
+            paymentMethods: pm.data || []
+        });
+
+        // Set defaults
+        if (p.data?.length) setFormData(prev => ({ ...prev, periodo: p.data[0].id }));
+        if (cc.data?.length) setFormData(prev => ({ ...prev, centroCusto: cc.data[0].id }));
+        if (cat.data?.length) setFormData(prev => ({ ...prev, categoria: cat.data[0].id }));
+        if (pm.data?.length) setFormData(prev => ({ ...prev, formaPagamento: pm.data[0].id }));
+    };
+
+    const handleSave = async () => {
+        if (!formData.valor || !formData.descricao) {
+            alert('Preencha o valor e a descrição');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const { error } = await supabase.from('transactions').insert({
+                cost_center_id: formData.centroCusto,
+                period_id: formData.periodo,
+                category_id: formData.categoria,
+                payment_method_id: formData.formaPagamento,
+                description: formData.descricao,
+                amount: parseFloat(formData.valor.replace(',', '.')),
+                type: formData.tipo
+            });
+
+            if (error) throw error;
+            onSave();
+        } catch (err) {
+            console.error('Error saving transaction:', err);
+            alert('Erro ao salvar lançamento');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="flex flex-col min-h-screen bg-background-light w-full pb-10">
@@ -43,11 +102,15 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ onBa
                 </button>
                 <h2 className="text-lg font-extrabold flex-1 ml-2 text-slate-900">Novo Lançamento</h2>
                 <button
-                    onClick={onSave}
-                    className="bg-primary text-white font-extrabold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-all flex items-center gap-2 cursor-pointer hover:bg-primary/90"
+                    onClick={handleSave}
+                    disabled={loading}
+                    className={cn(
+                        "bg-primary text-white font-extrabold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-all flex items-center gap-2 cursor-pointer hover:bg-primary/90",
+                        loading && "opacity-70 cursor-not-allowed"
+                    )}
                 >
                     <Save size={18} />
-                    Salvar
+                    {loading ? "Salvando..." : "Salvar"}
                 </button>
             </div>
 
@@ -67,6 +130,28 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ onBa
                     </div>
                 </div>
 
+                {/* Tipo de Lançamento */}
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setFormData({ ...formData, tipo: 'expense' })}
+                        className={cn(
+                            "flex-1 py-3 rounded-2xl font-bold border transition-all cursor-pointer",
+                            formData.tipo === 'expense' ? "bg-rose-500 text-white border-rose-500" : "bg-white text-rose-500 border-rose-100"
+                        )}
+                    >
+                        Despesa
+                    </button>
+                    <button
+                        onClick={() => setFormData({ ...formData, tipo: 'income' })}
+                        className={cn(
+                            "flex-1 py-3 rounded-2xl font-bold border transition-all cursor-pointer",
+                            formData.tipo === 'income' ? "bg-emerald-500 text-white border-emerald-500" : "bg-white text-emerald-500 border-emerald-100"
+                        )}
+                    >
+                        Receita
+                    </button>
+                </div>
+
                 {/* Form Fields */}
                 <div className="space-y-5">
                     {/* Período */}
@@ -76,18 +161,18 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ onBa
                             Período
                         </label>
                         <div className="grid grid-cols-3 gap-2">
-                            {periodos.map((p) => (
+                            {options.periods.map((p: any) => (
                                 <button
-                                    key={p}
-                                    onClick={() => setFormData({ ...formData, periodo: p })}
+                                    key={p.id}
+                                    onClick={() => setFormData({ ...formData, periodo: p.id })}
                                     className={cn(
                                         "py-3 px-2 rounded-2xl text-xs font-bold border transition-all cursor-pointer",
-                                        formData.periodo === p
+                                        formData.periodo === p.id
                                             ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
                                             : "bg-white text-slate-600 border-slate-100 hover:border-primary/30"
                                     )}
                                 >
-                                    {p}
+                                    {p.name}
                                 </button>
                             ))}
                         </div>
@@ -104,7 +189,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ onBa
                             value={formData.centroCusto}
                             onChange={(e) => setFormData({ ...formData, centroCusto: e.target.value })}
                         >
-                            {centrosCusto.map(c => <option key={c} value={c}>{c}</option>)}
+                            {options.costCenters.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                     </div>
 
@@ -130,18 +215,18 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ onBa
                             Categoria
                         </label>
                         <div className="flex flex-wrap gap-2">
-                            {categorias.map((cat) => (
+                            {options.categories.map((cat: any) => (
                                 <button
-                                    key={cat}
-                                    onClick={() => setFormData({ ...formData, categoria: cat })}
+                                    key={cat.id}
+                                    onClick={() => setFormData({ ...formData, categoria: cat.id })}
                                     className={cn(
                                         "py-2 px-4 rounded-xl text-xs font-bold border transition-all cursor-pointer",
-                                        formData.categoria === cat
+                                        formData.categoria === cat.id
                                             ? "bg-primary/10 text-primary border-primary/20"
                                             : "bg-white text-slate-500 border-slate-100 hover:border-primary/20"
                                     )}
                                 >
-                                    {cat}
+                                    {cat.name}
                                 </button>
                             ))}
                         </div>
@@ -158,7 +243,7 @@ export const AddTransactionScreen: React.FC<AddTransactionScreenProps> = ({ onBa
                             value={formData.formaPagamento}
                             onChange={(e) => setFormData({ ...formData, formaPagamento: e.target.value })}
                         >
-                            {formasPagamento.map(f => <option key={f} value={f}>{f}</option>)}
+                            {options.paymentMethods.map((f: any) => <option key={f.id} value={f.id}>{f.name}</option>)}
                         </select>
                     </div>
                 </div>

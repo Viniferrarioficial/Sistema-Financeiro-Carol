@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from './lib/supabase';
 import {
   Mail,
   Lock,
@@ -14,6 +15,8 @@ interface LoginScreenProps {
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -46,17 +49,33 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     }
   };
 
-  const handleLoginSubmit = () => {
-    if (keepLogged) {
-      localStorage.setItem('savedEmail', email);
-      localStorage.setItem('savedPassword', password);
-      localStorage.setItem('keepLogged', 'true');
-    } else {
-      localStorage.removeItem('savedEmail');
-      localStorage.removeItem('savedPassword');
-      localStorage.removeItem('keepLogged');
+  const handleLoginSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) throw authError;
+
+      if (keepLogged) {
+        localStorage.setItem('savedEmail', email);
+        localStorage.setItem('keepLogged', 'true');
+      } else {
+        localStorage.removeItem('savedEmail');
+        localStorage.removeItem('keepLogged');
+      }
+
+      onLogin();
+    } catch (err: any) {
+      setError(err.message || 'Erro ao realizar login');
+    } finally {
+      setLoading(false);
     }
-    onLogin();
   };
 
   return (
@@ -128,12 +147,22 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               </label>
             </div>
 
+            {error && (
+              <div className="bg-rose-50 border border-rose-100 text-rose-500 text-sm font-bold p-4 rounded-2xl flex items-center justify-center">
+                {error}
+              </div>
+            )}
+
             <button
-              onClick={handleLoginSubmit}
-              className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mt-4 active:scale-[0.98]"
+              onClick={() => handleLoginSubmit()}
+              disabled={loading}
+              className={cn(
+                "w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mt-4 active:scale-[0.98]",
+                loading && "opacity-70 cursor-not-allowed"
+              )}
             >
-              <span>Entrar</span>
-              <LogIn size={20} />
+              <span>{loading ? "Entrando..." : "Entrar"}</span>
+              {!loading && <LogIn size={20} />}
             </button>
           </div>
         </div>
