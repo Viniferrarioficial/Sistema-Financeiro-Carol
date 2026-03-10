@@ -99,7 +99,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             <p className="text-slate-500 text-center mt-2 font-medium">Gerencie suas lojas com confiança</p>
           </div>
 
-          <div className="w-full space-y-5">
+          <form onSubmit={handleLoginSubmit} className="w-full space-y-5">
             <div className="flex flex-col w-full">
               <p className="text-slate-700 text-sm font-bold pb-2 px-1">E-mail</p>
               <div className="relative">
@@ -110,6 +110,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                   type="email"
                   value={email}
                   onChange={handleEmailChange}
+                  required
                 />
               </div>
             </div>
@@ -124,8 +125,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
                 <button
+                  type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 cursor-pointer hover:text-slate-600"
                 >
@@ -154,7 +157,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             )}
 
             <button
-              onClick={() => handleLoginSubmit()}
+              type="submit"
               disabled={loading}
               className={cn(
                 "w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mt-4 active:scale-[0.98]",
@@ -164,7 +167,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               <span>{loading ? "Entrando..." : "Entrar"}</span>
               {!loading && <LogIn size={20} />}
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </div>
