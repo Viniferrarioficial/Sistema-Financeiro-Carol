@@ -9,7 +9,8 @@ import {
     Download,
     ChevronDown,
     Banknote,
-    ShoppingCart
+    ShoppingCart,
+    Calendar
 } from 'lucide-react';
 import { cn } from './lib/utils';
 
@@ -42,10 +43,15 @@ export const AllTransactionsScreen: React.FC<AllTransactionsScreenProps> = ({
         categories: []
     });
 
+    // Date filters state
+    const [filterType, setFilterType] = useState<'month' | 'range'>('month');
+    const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
+    const [customRange, setCustomRange] = useState({ start: '', end: '' });
+
     useEffect(() => {
         fetchOptions();
         fetchTransactions();
-    }, []);
+    }, [selectedMonth, customRange, filterType]);
 
     const fetchOptions = async () => {
         const [p, cc, cat] = await Promise.all([
@@ -64,6 +70,17 @@ export const AllTransactionsScreen: React.FC<AllTransactionsScreenProps> = ({
     const fetchTransactions = async () => {
         setLoading(true);
         try {
+            // Define start and end dates based on filter
+            let startDate, endDate;
+            if (filterType === 'month') {
+                startDate = `${selectedMonth}-01`;
+                const lastDay = new Date(Number(selectedMonth.split('-')[0]), Number(selectedMonth.split('-')[1]), 0).getDate();
+                endDate = `${selectedMonth}-${lastDay}`;
+            } else {
+                startDate = customRange.start || '2000-01-01';
+                endDate = customRange.end || '2099-12-31';
+            }
+
             const { data, error } = await supabase
                 .from('transactions')
                 .select(`
@@ -73,6 +90,8 @@ export const AllTransactionsScreen: React.FC<AllTransactionsScreenProps> = ({
           payment_methods (name),
           periods (name)
         `)
+                .gte('transaction_date', startDate)
+                .lte('transaction_date', endDate)
                 .order('transaction_date', { ascending: false });
 
             if (error) throw error;
@@ -155,8 +174,62 @@ export const AllTransactionsScreen: React.FC<AllTransactionsScreenProps> = ({
                             <Filter size={18} />
                             <span className="hidden md:inline">Filtros</span>
                         </button>
-                        <button className="h-11 w-11 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-2xl border border-emerald-100 hover:bg-emerald-100 transition-colors cursor-pointer">
-                            <Download size={20} />
+                    </div>
+
+                    {/* Quick Date Filter (always visible if requested or inside filters) */}
+                    <div className="flex flex-col md:flex-row gap-3 items-center">
+                        <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-xl w-full md:w-auto">
+                            <button
+                                onClick={() => setFilterType('month')}
+                                className={cn(
+                                    "flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer",
+                                    filterType === 'month' ? "bg-white text-primary shadow-sm" : "text-slate-500"
+                                )}
+                            >
+                                Mensal
+                            </button>
+                            <button
+                                onClick={() => setFilterType('range')}
+                                className={cn(
+                                    "flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer",
+                                    filterType === 'range' ? "bg-white text-primary shadow-sm" : "text-slate-500"
+                                )}
+                            >
+                                Personalizado
+                            </button>
+                        </div>
+
+                        <div className="flex items-center gap-3 w-full md:w-auto flex-1">
+                            {filterType === 'month' ? (
+                                <div className="relative w-full">
+                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-primary w-4 h-4 pointer-events-none" />
+                                    <input
+                                        type="month"
+                                        value={selectedMonth}
+                                        onChange={(e) => setSelectedMonth(e.target.value)}
+                                        className="w-full bg-slate-100 border-none rounded-xl h-9 pl-9 pr-4 text-xs font-extrabold text-slate-700 outline-none focus:ring-2 focus:ring-primary/20"
+                                    />
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2 w-full">
+                                    <input
+                                        type="date"
+                                        value={customRange.start}
+                                        onChange={(e) => setCustomRange({ ...customRange, start: e.target.value })}
+                                        className="flex-1 bg-slate-100 border-none rounded-xl h-9 px-3 text-[10px] font-extrabold text-slate-700 outline-none"
+                                    />
+                                    <span className="text-slate-400 font-bold text-xs">até</span>
+                                    <input
+                                        type="date"
+                                        value={customRange.end}
+                                        onChange={(e) => setCustomRange({ ...customRange, end: e.target.value })}
+                                        className="flex-1 bg-slate-100 border-none rounded-xl h-9 px-3 text-[10px] font-extrabold text-slate-700 outline-none"
+                                    />
+                                </div>
+                            )}
+                        </div>
+                        <button className="h-9 w-9 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100 hover:bg-emerald-100 transition-colors cursor-pointer">
+                            <Download size={18} />
                         </button>
                     </div>
 
